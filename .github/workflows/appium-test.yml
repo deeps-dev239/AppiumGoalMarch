@@ -1,0 +1,67 @@
+name: Appium Android Automation
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+
+jobs:
+  android-test:
+
+    runs-on: ubuntu-latest
+
+    steps:
+
+    - name: Checkout Project
+      uses: actions/checkout@v4
+
+    - name: Setup Java
+      uses: actions/setup-java@v4
+      with:
+        distribution: temurin
+        java-version: 21
+
+    - name: Setup Node
+      uses: actions/setup-node@v4
+      with:
+        node-version: 18
+
+    - name: Install Appium
+      run: |
+        npm install -g appium@2
+        appium driver install uiautomator2@2.29.4
+
+    - name: Install Maven Dependencies
+      run: mvn clean install -DskipTests
+
+    - name: Run Android Emulator and Tests
+      uses: reactivecircus/android-emulator-runner@v2
+      with:
+        api-level: 29
+        target: default
+        arch: x86
+        emulator-boot-timeout: 900
+        disable-animations: true
+        emulator-options: -no-window -no-snapshot -noaudio -no-boot-anim
+        script: |
+          adb kill-server
+          adb start-server
+          adb wait-for-device
+          adb devices
+          appium &
+          sleep 20
+          mvn test
+
+    - name: Upload Test Reports
+      if: always()
+      uses: actions/upload-artifact@v4
+      with:
+        name: TestNG-Reports
+        path: target/surefire-reports/
+
+    - name: Upload Screenshots
+      if: failure()
+      uses: actions/upload-artifact@v4
+      with:
+        name: Screenshots
+        path: screenshots/
