@@ -42,13 +42,15 @@ jobs:
         arch: x86_64
         profile: Nexus 6
         emulator-boot-timeout: 600
-        emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim
         disable-animations: true
+        emulator-options: -no-window -no-snapshot -no-snapshot-save -no-snapshot-load -gpu swiftshader_indirect -noaudio -no-boot-anim
         script: |
           adb kill-server
           adb start-server
+          adb wait-for-device
           adb devices
           appium &
+          sleep 15
           mvn test
 
     - name: Upload Test Reports
