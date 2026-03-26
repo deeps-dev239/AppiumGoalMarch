@@ -18,10 +18,11 @@ public class BaseTest {
                 .setPlatformName("Android")
                 .setDeviceName("emulator-5554")
                 .setAutomationName("UiAutomator2")
-                .setApp("C:\\Users\\Deepshika\\Downloads\\Android.SauceLabs.Mobile.Sample.app.2.7.1.apk")
-                .setAppPackage("com.swaglabsmobileapp")
-                .setAppActivity("com.swaglabsmobileapp.MainActivity")
-                .setNoReset(false);
+                .setApp(System.getProperty("user.dir") + "/apps/Android.SauceLabs.Mobile.Sample.app.2.7.1.apk");
+               // .setApp("C:\\Users\\Deepshika\\Downloads\\Android.SauceLabs.Mobile.Sample.app.2.7.1.apk")
+                //.setAppPackage("com.swaglabsmobileapp")
+                //.setAppActivity("com.swaglabsmobileapp.MainActivity")
+                //.setNoReset(false);
 
         driver = new AndroidDriver(
                 new URL("http://127.0.0.1:4723"),
