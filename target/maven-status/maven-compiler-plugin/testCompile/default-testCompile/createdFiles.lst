@@ -1,0 +1,6 @@
+tests\BaseTest.class
+tests\LogoutTest.class
+tests\MultipleProductTest.class
+tests\RemoveProductTest.class
+tests\AppLoginTest.class
+tests\PurchaseTest.class

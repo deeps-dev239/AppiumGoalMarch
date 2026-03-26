@@ -1,0 +1,6 @@
+pages\CheckoutPage.class
+pages\MenuPage.class
+pages\ProductsPage.class
+com\autotest\App.class
+pages\LoginPage.class
+pages\CartPage.class
