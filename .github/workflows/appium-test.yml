@@ -14,6 +14,17 @@ jobs:
 
     - name: Checkout Project
       uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+
+    - name: Verify Project Files
+      run: |
+        echo "Current directory:"
+        pwd
+        echo "Project files:"
+        ls
+        echo "Apps folder:"
+        ls apps || echo "apps folder not found"
 
     - name: Setup Java
       uses: actions/setup-java@v4
@@ -44,6 +55,8 @@ jobs:
         disable-animations: true
         emulator-options: -no-window -no-snapshot -noaudio -no-boot-anim
         script: |
+          echo "Checking APK before test execution..."
+          ls apps
           adb kill-server
           adb start-server
           adb wait-for-device
