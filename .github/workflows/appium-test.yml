@@ -1,44 +1,66 @@
-name: Run Appium Tests
+name: Appium Android Automation
 
 on:
   push:
     branches: [ main ]
+  pull_request:
 
 jobs:
-  appium-test:
+  android-test:
+
     runs-on: ubuntu-latest
 
     steps:
 
-      - name: Checkout Project
-        uses: actions/checkout@v4
+    - name: Checkout Project
+      uses: actions/checkout@v4
 
-      - name: Setup Java
-        uses: actions/setup-java@v4
-        with:
-          distribution: temurin
-          java-version: 21
+    - name: Setup Java
+      uses: actions/setup-java@v4
+      with:
+        distribution: temurin
+        java-version: 21
 
-      - name: Setup Node
-        uses: actions/setup-node@v4
-        with:
-          node-version: 18
+    - name: Setup Node
+      uses: actions/setup-node@v4
+      with:
+        node-version: 18
 
-      - name: Install Appium
-        run: |
-          npm install -g appium@2
-          appium driver install uiautomator2@2.29.4
+    - name: Install Appium
+      run: |
+        npm install -g appium@2
+        appium driver install uiautomator2@2.29.4
 
-      - name: Install Maven Dependencies
-        run: mvn clean install -DskipTests
+    - name: Install Maven Dependencies
+      run: mvn clean install -DskipTests
 
-      - name: Run Android Emulator and Tests
-        uses: reactivecircus/android-emulator-runner@v2
-        with:
-          api-level: 30
-          target: google_apis
-          arch: x86_64
-          profile: Nexus 6
-          emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim
-          disable-animations: true
-          script: mvn test
+    - name: Run Android Emulator and Tests
+      uses: reactivecircus/android-emulator-runner@v2
+      with:
+        api-level: 30
+        target: google_apis
+        arch: x86_64
+        profile: Nexus 6
+        emulator-boot-timeout: 600
+        emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim
+        disable-animations: true
+        script: |
+          adb kill-server
+          adb start-server
+          adb devices
+          appium &
+          mvn test
+
+    - name: Upload Test Reports
+      if: always()
+      uses: actions/upload-artifact@v4
+      with:
+        name: TestNG-Reports
+        path: target/surefire-reports/
+
+    - name: Upload Screenshots
+      if: failure()
+      uses: actions/upload-artifact@v4
+      with:
+        name: Screenshots
+        path: screenshots/
